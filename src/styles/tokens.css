@@ -1,11 +1,12 @@
 :root {
-  --paper: #f4f2ec;
-  --ink: #1f2421;
-  --muted: #656c65;
-  --sage: #69796b;
-  --sage-dark: #465649;
-  --line: #d6d2c9;
-  --dark: #1e2722;
+  color-scheme: dark;
+  --surface: #181d19;
+  --text: #f0eee6;
+  --muted: #abb3aa;
+  --sage: #8c9d88;
+  --accent: #bbc9b1;
+  --line: #3c483e;
+  --dark: #111712;
   --light: #f6f4ef;
   --serif: 'Newsreader Variable', Georgia, serif;
   --sans: 'DM Sans Variable', Arial, sans-serif;

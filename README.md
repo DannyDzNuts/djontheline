@@ -1,6 +1,6 @@
 # DJ — Chef / FoodFolio
 
-A single-page chef portfolio built with Astro, TypeScript, and CSS. The page moves from a signature dish through selected work and occasional process moments to experience, a short introduction, and contact. Photography, spacing, and typography carry the presentation; small scripts add motion and photo enlargement.
+A single-page chef portfolio built with Astro, TypeScript, and CSS. The page moves from a signature dish through selected work and occasional process moments to experience, a short introduction, and contact. A charcoal background, warm off-white text, and restrained sage accents support the photography. Spacing and typography carry the presentation; small scripts add motion and photo enlargement.
 
 The production address is **https://djontheline.com**, with base **`/`**. The site includes the homepage and a custom 404 page.
 
@@ -65,7 +65,7 @@ Optional fields are `season`, integer `year`, `media`, and `process`. Titles, co
 
 ## Additional photographs and lightbox
 
-Every dish can include a `media` array. It appears alongside the dish as a small editorial arrangement on the homepage, including for the signature dish:
+Selected dishes can include a `media` array. It appears alongside the dish as a small editorial arrangement on the homepage. The signature displays only its hero media so the opening flows directly into Selected Work:
 
 ```yaml
 media:

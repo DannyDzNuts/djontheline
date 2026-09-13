@@ -15,12 +15,6 @@ heroMedia:
   height: 1238
   placeholder: true
   position: 52% 44%
-media:
-  - type: image
-    src: /media/dishes/prime-rib/hero.webp
-    alt: "Placeholder beef photograph showing the sliced interior and browned crust."
-    placeholder: true
-    caption: "Photography placeholder — replace with a detail of the crust and doneness."
 layout:
   preferred: immersive
 ---
