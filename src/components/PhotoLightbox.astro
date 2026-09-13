@@ -1,0 +1,13 @@
+<dialog class="photo-lightbox" aria-label="Enlarged portfolio photograph">
+  <button class="lightbox-close" type="button" autofocus aria-label="Close photograph">Close <span aria-hidden="true">×</span></button>
+  <img alt="" />
+</dialog>
+<style>
+  .photo-lightbox { position: fixed; inset: 0; width: 100%; max-width: none; height: 100%; max-height: none; margin: 0; padding: clamp(60px, 8vh, 90px) 3vw 4vh; border: 0; background: transparent; color: var(--light); }
+  .photo-lightbox::backdrop { background: rgb(18 24 20 / .96); }
+  .photo-lightbox[open] { display: grid; place-items: center; }
+  .photo-lightbox img { display: block; max-width: 100%; max-height: 85dvh; width: auto; height: auto; object-fit: contain; }
+  .lightbox-close { position: absolute; top: 20px; right: 4vw; min-height: 44px; padding: 8px 14px; border: 1px solid #a4ada6; background: var(--dark); color: var(--light); cursor: pointer; font: inherit; }
+  .lightbox-close span { margin-left: 15px; font-size: 24px; }
+  .lightbox-close:focus-visible { outline: 2px solid var(--light); outline-offset: 5px; }
+</style>

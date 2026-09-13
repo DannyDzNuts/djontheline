@@ -1,6 +1,8 @@
-# DJ — Cook / FoodFolio
+# DJ — Chef / FoodFolio
 
-A culinary job-application portfolio built with Astro, TypeScript, and CSS. Static HTML, real dish-study URLs, local responsive photography, and small progressive motion scripts. No React or scrolling library.
+A single-page chef portfolio built with Astro, TypeScript, and CSS. The page moves from a signature dish through selected work and occasional process moments to experience, a short introduction, and contact. Photography, spacing, and typography carry the presentation; small scripts add motion and photo enlargement.
+
+The production address is **https://djontheline.com**, with base **`/`**. The site includes the homepage and a custom 404 page.
 
 ## Develop
 
@@ -9,15 +11,29 @@ Use Node **24 LTS** (minimum 22.12).
 ```sh
 npm install
 npm run dev
+npm run check
 npm run build
 npm run preview
 ```
 
-Astro serves at `http://localhost:4321`. If a restricted environment prevents Astro writing telemetry preferences, prefix commands with `ASTRO_TELEMETRY_DISABLED=1`.
+Astro serves at `http://localhost:4321`. In restricted environments, prefix commands with `ASTRO_TELEMETRY_DISABLED=1` to disable telemetry preference writes.
+
+## Page and content structure
+
+- `src/pages/index.astro` assembles the portfolio.
+- `src/components/SignatureHero.astro`, `DishSection.astro`, and `DishMedia.astro` present dishes and their media.
+- `ProcessBreak.astro` supplies occasional image or video interludes.
+- `ExperienceSection.astro`, `AboutSection.astro`, and `ContactSection.astro` finish the page.
+- `src/data/profile.ts` contains identity, experience descriptions, biography, and contact details.
+- `src/content/dishes/*.md` contains the dish frontmatter, validated by `src/content.config.ts`.
+- `src/lib/dishes.ts` selects the signature, orders work, chooses layouts, and spaces process moments.
+- `src/styles/tokens.css` contains the palette, fonts, spacing, and easing tokens; `global.css` contains presentation; `motion.css` owns reveal effects.
+
+The header links to `#work`, `#experience`, `#about`, and `#contact`. Dish slugs are individual homepage anchors, such as `/#prime-rib`. Use frontmatter for dish content; Markdown bodies are not rendered. There are no separate dish or About pages.
 
 ## Add a dish
 
-Create `src/content/dishes/your-dish.md`. Copy an existing entry or start with:
+Create `src/content/dishes/your-dish.md`:
 
 ```yaml
 ---
@@ -27,6 +43,7 @@ order: 5
 featured: true
 signature: false
 category: Grill
+year: 2026
 shortDescription: Main ingredient · accompaniment · sauce
 techniques: [Grilling, Temperature control]
 heroMedia:
@@ -38,15 +55,29 @@ layout:
 ---
 ```
 
-Add your photograph as described below **before building**. Every entry receives `/dishes/your-dish/`; `slug` defaults to the filename. Markdown body content appears after the study media. Lower `order` values appear first. `featured: false` keeps a study off the homepage; `study: false` removes its study route and links.
+Add the media before building. Lower `order` values appear first. The optional `slug` defaults to the filename and must be unique. Avoid page section IDs (`work`, `experience`, `about`, `contact`, `main`, and `top`). `featured: false` removes a dish from the homepage.
 
-Optional fields: `season`, `date`, `notes`, `whatWorked`, `nextIteration`, `media`, and `process`. Missing fields are omitted cleanly. `media` accepts any number of image/video objects. `sample: true` adds a study-note disclaimer; `placeholder: true` on each media item marks the image as a placeholder. Remove these flags only after replacing the sample material.
+Mark at most one featured dish `signature: true`; it opens the site regardless of order. If none is marked, the first featured dish becomes the signature. Duplicate slugs, multiple signatures, and an unfeatured signature fail validation.
 
-`layout.preferred` accepts `auto`, `left`, `right`, `wide`, or `immersive`. Auto uses orientation/dimensions, with an alternating fallback for ordinary landscape images. Add `width`, `height`, or `orientation: portrait | landscape | square` to guide auto layout. Media retain their intrinsic ratio except the full-viewport signature/process sections, which use cover; `position: 55% 40%` adjusts their focal point. The signature is displayed first, regardless of order. Set `signature: true` on only one featured dish. If none is marked, the first featured dish opens the site. Duplicate slugs/signatures fail with actionable errors.
+Optional fields are `season`, integer `year`, `media`, and `process`. Titles, concise descriptions, and techniques are shown directly on the homepage. Keep descriptions grounded in the actual dish. Set `placeholder: true` on each image or video that is temporary; the site labels temporary photography openly. Remove the flag after replacing the photograph. Photography credits are in `public/media/CREDITS.md`.
 
-Extend `src/content.config.ts` to add new optional fields, then consume them in a focused component when needed.
+`layout.preferred` accepts `auto`, `left`, `right`, `wide`, or `immersive`. Auto uses media proportions and alternates ordinary landscape compositions. Optional `width`, `height`, and `orientation: portrait | landscape | square` guide layout. Media keep their intrinsic ratio except full-height signature/process images, which use cover. `position: 55% 40%` adjusts the focal point.
 
-## Images and video
+## Additional photographs and lightbox
+
+Every dish can include a `media` array. It appears alongside the dish as a small editorial arrangement on the homepage, including for the signature dish:
+
+```yaml
+media:
+  - type: image
+    src: /media/dishes/your-dish/detail-01.webp
+    alt: A close view of the browned crust and sliced interior.
+    caption: Rested, then sliced across the grain.
+```
+
+Photographs are normal links to their image files. JavaScript progressively enhances anchors marked `data-lightbox` into a simple photo dialog; `data-alt` supplies the full image's alternative text. The hero and full-height process photograph use unobtrusive **Enlarge photo** links so text and navigation remain easy to use. Escape and the close control return to the page. Without JavaScript, the same links open the actual image file. Video stays in a native video player.
+
+## Prepare images
 
 ```text
 public/media/dishes/your-dish/
@@ -56,11 +87,13 @@ public/media/dishes/your-dish/
   carving-poster.original.jpg
 ```
 
-Run `npm run media` after adding or changing originals. The script scans `*.original.jpg/jpeg/png/webp`, respects rotation, retains proportions, and generates up to 2200px WebP plus 480/800/1200/1600/2200px WebP/AVIF variants. A generated manifest supplies `srcset` and intrinsic dimensions automatically. Set `src` to the generated `/media/dishes/your-dish/hero.webp` path. Commit the generated derivatives and `src/data/media-manifest.json`; deployment does not recompress every original. Large originals can be kept outside the repository after generation to reduce repository size.
+Run `npm run media` after adding or changing originals. The script scans `*.original.jpg/jpeg/png/webp`, respects rotation, retains proportions, and generates up to 2200px WebP plus 480/800/1200/1600/2200px WebP/AVIF variants. `src/data/media-manifest.json` supplies responsive sources and intrinsic dimensions. Reference the generated `/media/dishes/your-dish/hero.webp` path in frontmatter.
 
-Without the script, supply your own optimized file and **accurate `width` and `height`**. Below-fold images load lazily; only the hero is eager/high priority. Fonts are bundled locally. Nothing fetches stock imagery at runtime. Placeholder credits are in `public/media/CREDITS.md`.
+Commit generated derivatives and the manifest; deployment does not recompress originals. Large originals can be kept outside the repository after generation. If you prepare images yourself, supply optimized files and accurate `width` and `height`. Below-fold photographs load lazily; only the signature is eager/high priority. Fonts are bundled locally. Nothing fetches stock imagery at runtime.
 
-Example additional video:
+## Video and process moments
+
+Use video in `heroMedia`, the `media` array, or a process moment:
 
 ```yaml
 media:
@@ -76,29 +109,43 @@ media:
     autoplay: false
 ```
 
-Use H.264 MP4 for broad browser compatibility. Posters are required, controls are always present, preload is `none`, and sources attach near the viewport. A direct file link also works without JavaScript. `autoplay: true` allows muted inline playback, with reduced motion and data-saving exceptions; avoid audio in decorative footage. Caption spoken/informative audio with a WebVTT file. Process breaks use `process: { title, description, media }`; only the first configured process break is shown on the homepage so it stays exceptional. Study pages display their own process content.
+Use H.264 MP4 for broad compatibility. Posters are required, controls stay available, preload is `none`, and sources attach near the viewport. Direct video file links work without JavaScript. `autoplay: true` permits muted inline playback subject to reduced-motion and data-saving preferences. Caption spoken or informative audio with a WebVTT file.
 
-## Profile, résumé, and contact
+Add optional process frontmatter to a featured dish:
 
-Edit `src/data/profile.ts` for the bio, skills, email, and résumé link. Blank email shows honest placeholder text rather than a nonfunctional mail link. Add restaurant names/dates in the About component once available.
+```yaml
+process:
+  title: The work before the plate.
+  description: Heat, timing, and a careful rest before carving.
+  media:
+    type: image
+    src: /media/dishes/your-dish/detail-01.webp
+    alt: The roast resting on a board before carving.
+```
 
-Replace `public/resume.pdf` with your final résumé and set `resumeIsDraft: false`. The included PDF is clearly labeled as a draft, with no invented employers or credentials. The navigation opens the PDF directly; visitors can use their browser's download control.
+The same `media` schema accepts a video here, including its required poster. Up to three configured process moments are selected in dish order. Short portfolios show fewer: placement allows a moment after every second selected composition (or the only dish in a shorter portfolio), then spreads the selected moments across those available positions. A portfolio with only the signature can show one process moment. Each receives a unique `process-{dish-slug}` anchor. The included still placeholder remains a still photograph until real footage is available.
+
+## Profile and contact
+
+Edit `src/data/profile.ts` to set the name, Chef role, biography, and practical kitchen experience. Experience is organized around actual station work; add employers or dates only when accurate details are available.
+
+The visible email is currently **`your@email.com`**, explicitly labeled as a placeholder. Replace `email` with the real address and set `emailIsPlaceholder: false`. The contact section uses a normal `mailto:` link. It has no form or external service configuration.
 
 ## Motion and scrolling
 
-The page uses native desktop wheel, trackpad, keyboard, scrollbar, and touch scrolling. Wheel events are never canceled or rescaled; smooth wheel feel follows the visitor's browser/OS settings. CSS animates a 1.5-second hero zoom and title wipe; IntersectionObserver introduces each composition with a deeper media reveal, image zoom, and grouped text stagger. Process photography has its own slow zoom into place. Everything becomes still after 1.5 seconds; there are no looping decorative effects. Motion lives in `src/styles/motion.css`, and the scroll anchors remain stationary during reveals. Native cross-document view transitions are a progressive enhancement, with standard navigation as fallback. Content works without JavaScript.
+A small requestAnimationFrame controller smooths confidently identified mouse-wheel detents while preserving their total distance. Line-mode detents and repeated identical 80–160px steps qualify; uncertain, fractional, horizontal, or continuous input remains native. Trackpads, scrollbar dragging, keyboard navigation, and active touch dragging retain native behavior. Reveal effects progressively enhance visible content; media, headlines, and supporting copy use short, staged entrances. The reveal controller and CSS share stable hooks: `.hero-media`, `.hero-copy`, `.dish-visual`, `.media-frame`, `.dish-copy`, and `[data-reveal]`. The `data-snap-anchor` wrapper remains stationary while its contents animate.
 
-On touch devices, an optional 340ms settle can run after 220ms without scrolling. It moves at most 72px / 9% of the viewport, targets media at 12% from the top, skips fast/far swipes and tall media, and cancels on any new interaction. It never changes an active touch drag or native momentum. Reduced motion disables this, entrances, transitions, and autoplay. Homepage IDs support direct `/#your-dish` links; automatic fragment rewriting is deliberately omitted to preserve explicit anchor/history behavior.
+`src/scripts/scroll-motion.ts` controls entrances, `mobile-settle.ts` handles optional gentle touch settling, `wheel-motion.ts` handles conservative wheel smoothing, and `scroll-policy.ts` holds scroll decisions. Settle behavior must yield to new input, active momentum, anchor navigation, and reduced-motion preferences. Touch settling waits for scroll-end or a quiet fallback interval, targets media at 12% of viewport height, and only corrects nearby positions (up to 17% of the viewport or 144px). Fast swipes remain free; there is no mandatory snap sequence. Content remains readable with JavaScript disabled, and reduced motion disables decorative entrances, wheel smoothing, autoplay, and settling. Entrances wait for decoded lead photography and two animation frames so they cannot finish before the photograph arrives.
 
-In **development only**, open `/?motionDebug=true` for the replay control. Production has no debug UI.
+In development, open **`/?motionDebug=true`** for motion diagnostics and replay. The diagnostic UI is excluded from production. Replay is for inspection; normal browsing should leave completed reveals at rest. The photo dialog and video behavior are initialized in `BaseLayout.astro` alongside motion.
 
 ## GitHub Pages
 
-1. Create a GitHub repository, add this project, and push to `main`.
-2. In **Settings → Pages**, choose **GitHub Actions** as the source.
-3. The included workflow builds and deploys `dist/`. Pull requests build without publishing.
+The included workflow builds and deploys `dist/` from `main`; pull requests build without publishing. In repository **Settings → Pages**, choose **GitHub Actions** as the source.
 
-The configured production address is **https://djontheline.com**, with base `/`. All internal links, résumé, fonts, and media respect the base. `SITE_URL` and `BASE_PATH` optionally override these defaults. For a repository-hosted GitHub Pages site, set those repository Actions variables to `https://YOUR-USERNAME.github.io` and `/YOUR-REPOSITORY/` (use `/` for an `OWNER.github.io` repository). For local production verification:
+`astro.config.mjs` defaults to **https://djontheline.com** and base **`/`**. All public assets and homepage links respect the base. `SITE_URL` and `BASE_PATH` optionally override these defaults. For a repository-hosted GitHub Pages site, set repository Actions variables to `https://YOUR-USERNAME.github.io` and `/YOUR-REPOSITORY/` (use `/` for an `OWNER.github.io` repository).
+
+To verify a repository path locally:
 
 ```sh
 SITE_URL=https://YOUR-USERNAME.github.io BASE_PATH=/FoodFolio/ npm run build
@@ -106,19 +153,18 @@ BASE_PATH=/FoodFolio/ npm run preview
 # Open http://localhost:4321/FoodFolio/
 ```
 
-The current custom domain is already the default in `astro.config.mjs`. To change it, configure the new domain/DNS in GitHub Pages, set repository Actions variables `SITE_URL=https://your-domain.example` and `BASE_PATH=/`, and redeploy. You can also add the domain in `public/CNAME`. With the Actions publishing method, configure the domain in Pages settings as well. Never include `/public` or the repository name in dish frontmatter paths.
-
-References: [Astro content collections](https://docs.astro.build/en/guides/content-collections/) and [Astro GitHub Pages deployment](https://docs.astro.build/en/guides/deploy/github/).
+To change the custom domain, configure its DNS and GitHub Pages settings, set `SITE_URL=https://your-domain.example` and `BASE_PATH=/`, and redeploy. A `public/CNAME` may also record the domain; with Actions publishing, configure Pages settings as well. Never include `/public` or the repository name in frontmatter media paths.
 
 ## Verify
 
 ```sh
+npm run check
 npm run test:unit
-npx playwright install chromium
+npx playwright install chromium firefox
 npm run build
 npm test
-# Optional authoring/video fixtures (requires ffmpeg):
+# Optional content/video fixtures, requiring ffmpeg:
 npm run test:content
 ```
 
-For a repository-path build, run tests with `TEST_BASE=/FoodFolio/ TEST_URL=http://127.0.0.1:4321/FoodFolio/ BASE_PATH=/FoodFolio/ npm test`. Browser checks cover routes/assets, six widths, keyboard/anchors, reduced motion, accessibility, responsive media, scroll behavior, and no-JavaScript access. See `docs/verification.md` for the performed checks and physical-device limits.
+For a repository-path build, run browser tests with `TEST_BASE=/FoodFolio/ TEST_URL=http://127.0.0.1:4321/FoodFolio/ BASE_PATH=/FoodFolio/ npm test`. Check desktop and narrow-screen layouts, all four navigation anchors, image enlargement and keyboard dismissal, reduced motion, no-JavaScript behavior, and additional image/video content. Physical-device scrolling should be tested separately from browser emulation. See `docs/verification.md` for verification records and device limits.

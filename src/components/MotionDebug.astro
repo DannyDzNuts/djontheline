@@ -1,21 +1,33 @@
-{import.meta.env.DEV && <button class="motion-debug" hidden type="button">Replay entrance animations</button>}
+{import.meta.env.DEV && <details class="motion-debug" hidden>
+  <summary>Motion diagnostics</summary>
+  <p class="motion-status"></p>
+  <button type="button" data-replay>Replay entrances</button>
+  <button type="button" data-anchors>Show resting anchors</button>
+  <pre aria-live="polite"></pre>
+</details>}
 <script>
   if (import.meta.env.DEV && new URLSearchParams(location.search).get('motionDebug') === 'true') {
-    const button = document.querySelector<HTMLButtonElement>('.motion-debug');
-    if (button) {
-      button.hidden = false;
-      button.addEventListener('click', () => {
-        const hero = document.querySelector('.signature-hero');
-        hero?.classList.add('replaying');
-        document.querySelectorAll('[data-reveal]').forEach(el => el.classList.remove('is-visible'));
-        requestAnimationFrame(() => requestAnimationFrame(() => {
-          hero?.classList.remove('replaying');
-          document.querySelectorAll('[data-reveal]').forEach(el => {
-            const rect = el.getBoundingClientRect();
-            if (rect.top < innerHeight && rect.bottom > 0) el.classList.add('is-visible');
-          });
-        }));
+    const panel = document.querySelector<HTMLElement>('.motion-debug');
+    if (panel) {
+      panel.hidden = false;
+      const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+      const status = () => { panel.querySelector('.motion-status')!.textContent = `Reduced motion: ${reduced.matches} · viewport ${innerWidth} × ${innerHeight}`; };
+      status(); reduced.addEventListener('change', status); window.addEventListener('resize', status);
+      panel.querySelector('[data-replay]')?.addEventListener('click', () => document.dispatchEvent(new Event('portfolio:replay')));
+      panel.querySelector('[data-anchors]')?.addEventListener('click', () => document.documentElement.classList.toggle('show-motion-anchors'));
+      const log: string[] = [];
+      document.addEventListener('portfolio:motion', event => {
+        log.push(JSON.stringify((event as CustomEvent).detail));
+        panel.querySelector('pre')!.textContent = log.slice(-6).join('\n');
       });
     }
   }
 </script>
+<style is:global>
+  .motion-debug { position: fixed; z-index: 100; right: 10px; bottom: 10px; max-width: min(410px, calc(100vw - 20px)); padding: 12px; background: #f4f2ec; color: #1f2421; border: 1px solid #465649; font: 12px/1.5 monospace; }
+  .motion-debug summary, .motion-debug button { cursor: pointer; min-height: 36px; }
+  .motion-debug button { margin: 4px; padding: 6px; }
+  .motion-debug pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 180px; overflow: auto; }
+  .show-motion-anchors [data-snap-anchor] { outline: 3px solid #9e432a; }
+  .show-motion-anchors::after { content: '12% resting line'; position: fixed; z-index: 99; top: 12%; left: 0; width: 100%; border-top: 2px solid #9e432a; color: #fff; text-shadow: 0 1px 3px #000; pointer-events: none; }
+</style>

@@ -1,93 +1,47 @@
-/* The photograph and its caption move as one composition; the resting anchor never moves. */
-@keyframes hero-media {
-  from { transform: scale(1.105); filter: blur(2px); }
-  to { transform: scale(1); filter: none; }
-}
-@keyframes title-reveal {
-  from { opacity: 0; transform: translateY(58px); clip-path: inset(0 0 100% 0); }
-  to { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
-}
-@keyframes enter {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: none; }
-}
+@keyframes hero-media { from { transform: scale(1.06); } to { transform: scale(1); } }
+@keyframes title-reveal { from { opacity: 0; transform: translateY(44px); clip-path: inset(0 0 100% 0); } to { opacity: 1; transform: none; clip-path: inset(0); } }
+@keyframes enter { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 
 @media (prefers-reduced-motion: no-preference) {
-  @view-transition { navigation: auto; }
-  ::view-transition-old(root) { animation-duration: 180ms; }
-  ::view-transition-new(root) { animation-duration: 300ms; }
+  :is([data-motion="pending"], [data-motion="full"]) .signature-hero:not(.hero-media-ready) .hero-media { transform: scale(1.06); }
+  :is([data-motion="pending"], [data-motion="full"]) .signature-hero:not(.hero-text-ready) :is(.hero-eyebrow, h1, .hero-description, .techniques) { opacity: 0; }
+  .hero-media-ready .hero-media { animation: hero-media 1500ms var(--ease) both; }
+  .hero-text-ready .hero-eyebrow { animation: enter 700ms 100ms var(--ease) both; }
+  .hero-text-ready h1 { animation: title-reveal 1000ms 220ms var(--ease) both; }
+  .hero-text-ready .hero-description { animation: enter 800ms 430ms var(--ease) both; }
+  .hero-text-ready .techniques { animation: enter 800ms 630ms var(--ease) both; }
 
-  [data-reveal].will-reveal {
-    --reveal-travel: 64px;
-    --reveal-duration: 1250ms;
+  /* Animate the media inside its stable resting anchor, never the anchor itself. */
+  .will-reveal :is(.dish-visual .media-frame, .dish-details .media-frame),
+  .dish-details.will-reveal .media-frame, .process-film.will-reveal .media-frame {
+    opacity: .65; transform: translateY(50px); clip-path: inset(0 0 14% 0);
+    transition: transform 1100ms var(--ease), clip-path 1100ms var(--ease), opacity 800ms var(--ease);
   }
-  .will-reveal .dish-visual .media-frame {
-    opacity: .2;
-    transform: translateY(var(--reveal-travel));
-    clip-path: inset(0 0 22% 0);
-    transition: transform var(--reveal-duration) var(--ease), clip-path var(--reveal-duration) var(--ease), opacity 900ms var(--ease);
+  .will-reveal :is(.dish-visual img, .dish-details img, .process-media img), .dish-details.will-reveal img {
+    transform: scale(1.045); transition: transform 1300ms var(--ease);
   }
-  .will-reveal .dish-visual img {
-    transform: scale(1.085);
-    transition: transform 1450ms var(--ease);
+  .will-reveal .dish-copy > *, .will-reveal .process-copy > *, .process-film.will-reveal .page-width > :not(.media-frame),
+  .will-reveal :is(.intro-grid, .about-copy, .experience-list, .contact-inner) {
+    opacity: 0; transform: translateY(30px);
+    transition: opacity 800ms 180ms var(--ease), transform 1000ms 180ms var(--ease);
   }
-  .will-reveal .dish-copy {
-    opacity: 0;
-    transform: translateY(38px);
-    transition: opacity 950ms 160ms var(--ease), transform 1100ms 160ms var(--ease);
+  .will-reveal .dish-copy h2 { transition-delay: 230ms; }
+  .will-reveal .dish-copy .dish-description { transition-delay: 390ms; }
+  .will-reveal .dish-copy .techniques { transition-delay: 550ms; }
+  .will-reveal .process-copy h2 { transition-delay: 230ms; }
+  .will-reveal .process-copy > p:not(.eyebrow) { transition-delay: 400ms; }
+  .will-reveal.is-visible :is(.dish-visual .media-frame, .dish-details .media-frame),
+  .dish-details.will-reveal.is-visible .media-frame, .process-film.will-reveal.is-visible .media-frame {
+    opacity: 1; transform: none; clip-path: inset(0);
   }
-  .will-reveal .dish-copy .techniques {
-    opacity: 0;
-    transform: translateY(12px);
-    transition: opacity 800ms 350ms var(--ease), transform 850ms 350ms var(--ease);
-  }
-  .will-reveal .process-media img {
-    transform: scale(1.13);
-    transition: transform 1500ms var(--ease);
-  }
-  .will-reveal .process-copy {
-    opacity: 0;
-    transform: translateY(48px);
-    transition: opacity 1100ms 160ms var(--ease), transform 1250ms 160ms var(--ease);
-  }
-  .will-reveal .intro-grid, .will-reveal .about-copy {
-    opacity: 0;
-    transform: translateY(36px);
-    transition: opacity 950ms var(--ease), transform 1150ms var(--ease);
-  }
-  .will-reveal.is-visible .dish-visual .media-frame,
-  .will-reveal.is-visible .dish-copy,
-  .will-reveal.is-visible .dish-copy .techniques,
-  .will-reveal.is-visible .process-copy,
-  .will-reveal.is-visible .intro-grid,
-  .will-reveal.is-visible .about-copy {
-    opacity: 1;
-    transform: none;
-  }
-  .will-reveal.is-visible .dish-visual .media-frame { clip-path: inset(0 0 0 0); }
-  .will-reveal.is-visible .dish-visual img,
-  .will-reveal.is-visible .process-media img { transform: none; }
-
-  /* A keyboard focus change must expose its target immediately. */
+  .will-reveal.is-visible :is(.dish-visual img, .dish-details img, .process-media img), .dish-details.will-reveal.is-visible img { transform: none; }
+  .will-reveal:is(.is-visible, .text-ready) .dish-copy > *, .will-reveal:is(.is-visible, .text-ready) .process-copy > *,
+  .process-film.will-reveal:is(.is-visible, .text-ready) .page-width > :not(.media-frame),
+  .will-reveal:is(.is-visible, .text-ready) :is(.intro-grid, .about-copy, .experience-list, .contact-inner) { opacity: 1; transform: none; }
   .will-reveal:focus-within * { transition: none !important; }
-
-  .is-settling .dish-copy, .is-settling .dish-copy .techniques,
-  .is-settling .dish-visual .media-frame, .is-settling .dish-visual img {
-    transition-duration: 340ms !important;
-    transition-delay: 0ms !important;
-  }
-  @media (max-width: 760px) {
-    [data-reveal].will-reveal { --reveal-travel: 42px; --reveal-duration: 1100ms; }
-  }
+  .is-settling :is(.dish-copy > *, .dish-visual .media-frame, .dish-visual img) { transition-duration: 420ms !important; transition-delay: 0ms !important; }
 }
-
 @media (prefers-reduced-motion: reduce) {
-  .hero-media { filter: none !important; }
-  .will-reveal .media-frame, .will-reveal img, .will-reveal .dish-copy,
-  .will-reveal .techniques, .will-reveal .process-copy,
-  .will-reveal .intro-grid, .will-reveal .about-copy {
-    opacity: 1 !important;
-    transform: none !important;
-    clip-path: none !important;
-  }
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  .hero-media, .will-reveal * { transform: none !important; filter: none !important; clip-path: none !important; opacity: 1 !important; }
 }

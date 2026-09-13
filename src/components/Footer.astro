@@ -1,9 +1,7 @@
 ---
 import { profile } from '../data/profile';
 import { url } from '../lib/paths';
-import Arrow from './Arrow.astro';
 ---
 <footer class="site-footer">
-  <div class="page-width footer-main"><div><p class="eyebrow">Next service. Next opportunity.</p><h2>Let’s make good food.</h2></div><div class="footer-contact">{profile.email ? <a class="text-link" href={`mailto:${profile.email}`}>Get in touch <Arrow direction="up-right" /></a> : <span>Contact details coming soon</span>}<a class="text-link" href={url(profile.resume)}>Résumé <Arrow direction="up-right" /></a></div></div>
   <div class="page-width footer-bottom"><a class="wordmark" href={url()}>{profile.name}<span class="wordmark-rule" aria-hidden="true"></span><span>{profile.role}</span></a><span>A body of work, in progress.</span><a href="#top">Back to top ↑</a></div>
 </footer>

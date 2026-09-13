@@ -1,25 +1,40 @@
 # Verification — September 13, 2026
 
-The initial portfolio and the stronger entrance-motion update were checked locally before publishing.
+This record covers the single-page chef portfolio update. The prior source-only checks were insufficient: the reported live behavior was investigated before changing animation strength.
 
-| Area | Performed check and result |
+## Root-cause evidence
+
+- The deployed baseline (`3a72de9`) delivered its bundled script and ran without JavaScript errors in Chromium and Firefox. Reveal selectors and IntersectionObserver callbacks matched the rendered DOM; this was not an absent Astro script or broken repository asset prefix.
+- Delaying the live hero photograph reproduced an invisible entrance: Chromium finished the animation around 2.04 seconds while its image was still unloaded. Firefox finished around 1.88 seconds; its photograph arrived around 2.13 seconds. The CSS animation was spending its duration before there was a photograph to animate.
+- The previous controller armed and exposed initially visible elements without guaranteeing a painted starting state. The new controller waits for decoded lead media and two animation frames. Additional lazy gallery images cannot block the lead image. Slow media has a text fallback; failed decoding cannot strand copy.
+- A real browser touch gesture beginning on a baseline photograph ended only 27px from its resting anchor and did not settle. The old handler excluded every anchor, including photograph links. It also canceled on viewport-height changes from Android browser chrome. The replacement permits photograph gestures and only treats width changes as resize interruptions.
+- On the physical Pixel 7 Pro, Vanadium explicitly reported `prefers-reduced-motion: reduce`. Its animator duration scale was `0.0`. This correctly disables entrances and soft settling. With the user's permission, the scale was temporarily changed to `1`, the browser then reported normal motion, and physical motion tests ran. The original `0.0` value was restored afterward. The transition animation setting remained unchanged at `0.0`.
+- Desktop OS animation settings were disabled, but isolated headful Chromium and Firefox reported normal motion. The user's existing Firefox/Brave profile preferences were not inspected; browser-specific settings may still suppress motion correctly.
+
+## Checks performed
+
+| Area | Evidence |
 | --- | --- |
-| Production output | `npm run build`: seven static pages; Astro check reported zero errors, warnings, or hints. Custom-domain defaults remain `https://djontheline.com` and `/`. |
-| Browser regression suite | 18 Chromium checks passed at `/`, then the same 18 passed at `/FoodFolio/`. One additional trusted-touch test passed after being added. |
-| Second browser engine | 11 Firefox checks passed, covering motion, focus, reduced motion, routes, and layouts. |
-| Responsive layout | Homepage, About, and dish study checked at 360, 390, 768, 1024, 1440, and 1920px widths; no horizontal overflow. Desktop and phone screenshots inspected. |
-| Routes and local assets | All four dish URLs opened directly. Local page links, résumé, images, responsive sources, and stylesheet requests returned 200. Homepage fragment links reached their dishes. |
-| Image delivery and layout shift | Intrinsic dimensions present; hero fills viewport. Tall phone hero selects a 1600px AVIF, ordinary phone dish selects 480px. Desktop layout-shift assertion passed below 0.05. Below-fold images are lazy. |
-| Accessibility | Automated axe scan passed. Skip link, keyboard focus, direct anchors, and no-JavaScript study navigation passed. Focusing an unrevealed section immediately exposes it. |
-| Motion | Hero resolves in 1.5 seconds. Dish and process motion stops after entering. Intermediate clipping values verified in Chromium and Firefox, preventing a discrete mask jump. The media scroll anchor itself remains untransformed. |
-| Reduced motion | Initial and dynamically changed preferences disable transforms, clipping, blur, autoplay, and touch settling. All tested content remains visible. |
-| Desktop scrolling | Native 120px wheel and 12px precision deltas remain unchanged; events are not canceled. Page Down, Home, End, and direct scroll-position changes work. An actual scrollbar drag, with Chromium's default scrollbar-hiding flag disabled, moved to 2236px and remained there after release. |
-| Mobile scrolling | Browser touch tests confirmed no settle during active touch or continued momentum; small nearby corrections settle afterward. New input interrupts an active animation. Fast swipes and reduced motion remain native. An additional CDP-dispatched touch gesture verified movement under the finger, no drift while held, and proximity settling after release. |
-| Content variants | Builds accept omitted optional fields, reject duplicate slugs/signatures and missing local media, and require video posters. Nonfeatured studies return to an existing work anchor. Temporary fixtures were restored after checks. |
-| Video | Generated neutral test footage verified playable signature, dish, and process players, accessible controls and transcripts, no link wrapping of players, and the reduced-motion autoplay guard. Test footage is not published. |
-| Development controls | `?motionDebug=true` exposes replay only in development. Clicking restarts the hero, which resolves to no blur. The normal development URL hides it; production contains no debug control. |
-| Deployment paths | Full browser suite passed under `/FoodFolio/`; the default custom-domain build was restored afterward. Explicit environment overrides remain available without changing the custom-domain defaults. |
+| Build | Production `npm run build` succeeds with zero Astro errors, warnings, or hints; homepage and 404 are the only generated pages. |
+| Chromium and Firefox | 34 browser checks passed; four Firefox touch cases are explicitly skipped because those tests use Chromium's touch injection. Both engines visibly animate loaded hero media, dish media, staged text, and the process photograph, then remain still. |
+| Hero readiness | A 2.2-second image delay verifies that zoom has not already run; the decoded photograph still starts above 1.025 scale and reaches exactly 1. Screenshots capture the moving composition. |
+| Dish reveal | Intermediate transforms/opacity, separate heading and technique delays, stable media anchors, and once-only reveal behavior are asserted. |
+| Pixel hero | ADB screen recording captures the title wipe, enlarged photograph, and supporting copy arriving before the final still frame. |
+| Pixel soft settle | ADB delivered a 700ms swipe on the burger photograph. The browser logged eligible touch, momentum wait, a 59px correction, then settled. Screen recording shows the correction finishing at the 12% media resting position. |
+| Pixel fast swipe | A 100ms swipe passed the pork chop and seasonal dish to the process moment. Diagnostics classified it as a free fast swipe and no settle was imposed. Android's changing viewport height did not interrupt normal scrolling. |
+| Native touch | Chromium trusted-touch input on the photograph moves the page under the finger; holding the touch causes no drift. Momentum postpones settling; new touch interrupts correction; reduced motion and fast swipes stay native. |
+| Wheel | Repeated discrete 120px steps produce intermediate glide positions and preserve their 240px total. Subsequent fractional 12.5px steps are not canceled. A scroll-call counter verifies the animation actually terminates, including integer scroll rounding. |
+| Other input | Page Up/Down, Home/End, Space, anchor navigation, and pointer cancellation pass. A real Chromium scrollbar drag moved to 2728px and remained at 2728px after release. |
+| Accessibility | Axe scans report no violations in Chromium or Firefox. Skip link, main focus, lightbox Escape/outside dismissal, focus restoration, image alternatives, reduced motion, and no-JavaScript image navigation pass. |
+| Responsive layout | 360, 390, 768, 1024, 1440, and 1920px widths have no horizontal overflow; intrinsic media dimensions reserve layout space. Desktop and phone screenshots inspected. Layout-shift checks stay below 0.05. |
+| Content | Minimal frontmatter builds directly into the homepage; duplicate slugs/signatures, missing media, and missing video posters fail clearly. Temporary test content is restored. |
+| Video | Generated neutral footage checks native signature/dish/process players, unobstructed controls, transcripts, and reduced-motion autoplay suppression. A separate normal-motion check verifies deferred fetching, intermediate process-player transforms, the final still state, and muted autoplay. Footage is not published. |
+| Repository base | Ten Chromium layout/navigation/accessibility/media checks passed with `/FoodFolio/`. The custom-domain `/` build was restored afterward. |
+| Production configuration | `astro.config.mjs` remains unchanged: `https://djontheline.com`, base `/`. Existing Pages custom-domain settings are preserved. No production `/djontheline/` prefix. |
+| Diagnostics | Development query exposes preference status, replay, resting-anchor outlines, and touch/reveal decisions. Production HTML has no diagnostic controls. |
 
-Hardware limits: touch and precision-wheel behavior were exercised through browser emulation and event delivery, not a physical iPhone or trackpad. WebKit could not run on this host because its ICU/JPEG system libraries were unavailable. Physical iOS/Safari feel remains a device-review item.
+## Practical limits and choices
 
-Intentional choices: desktop scrolling stays native; no device-classification heuristics or wheel inertia are imposed. Homepage fragments are not rewritten automatically. The stock photographs, sample notes, contact placeholder, and draft résumé remain clearly marked and must be replaced with final material for applications.
+No physical precision trackpad or iOS device was available. Trackpad-like browser input was exercised; ambiguous wheel input intentionally stays native. Vanadium supplied the physical Android check; Chromium is the Brave-equivalent engine test, not a claim to have inspected the user's Brave profile.
+
+Reduced-motion preferences intentionally suppress the enhanced experience. The Pixel was restored to its original preference after testing. Homepage fragments remain normal anchors and are not rewritten during scrolling. Process moments use still placeholders until actual footage is supplied. Photographs and the central email remain explicitly labeled placeholders.

@@ -1,0 +1,9 @@
+---
+import { profile } from '../data/profile';
+---
+<section class="experience-section page-width" id="experience" aria-labelledby="experience-title" data-reveal>
+  <div class="experience-heading"><p class="eyebrow">Kitchen experience</p><h2 id="experience-title">Built through<br /><em>the work.</em></h2></div>
+  <div class="experience-list">
+    {profile.experience.map((item, index) => <div class="experience-item"><span class="experience-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span><div><h3>{item.title}</h3><p>{item.description}</p></div></div>)}
+  </div>
+</section>

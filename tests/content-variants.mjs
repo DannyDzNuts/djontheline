@@ -8,12 +8,12 @@ import { chromium } from 'playwright';
 // Isolated output; temporary content is always restored, including on assertion failure.
 const output = await mkdtemp('.validation-output-');
 const fixture = 'src/content/dishes/zz-validation.md';
-const secondary = 'src/content/dishes/zz-video-study.md';
+const secondary = 'src/content/dishes/zz-video-validation.md';
 const originalPath = 'src/content/dishes/prime-rib.md';
 const original = await readFile(originalPath, 'utf8');
 const mediaPath = 'public/media/validation.mp4';
 let server, browser;
-const minimal = `title: Validation Plate\nslug: validation-plate\nfeatured: false\nshortDescription: A content validation fixture.\nheroMedia:\n  type: image\n  src: /media/dishes/prime-rib/hero.webp\n  alt: Sample image for validation.`;
+const minimal = `title: Validation Plate\nslug: validation-plate\nfeatured: true\nshortDescription: A content validation fixture.\nheroMedia:\n  type: image\n  src: /media/dishes/prime-rib/hero.webp\n  alt: Sample image for validation.`;
 const put = data => writeFile(fixture, `---\n${data}\n---\n`);
 function build() {
   const result = spawnSync(process.execPath, ['node_modules/astro/bin/astro.mjs', 'build', '--outDir', output], { encoding: 'utf8', env: { ...process.env, ASTRO_TELEMETRY_DISABLED: '1', BASE_PATH: '/' } });
@@ -22,15 +22,15 @@ function build() {
 try {
   await put(minimal);
   let result = build(); assert.equal(result.status, 0, result.log);
-  let html = await readFile(join(output, 'dishes/validation-plate/index.html'), 'utf8');
-  assert.match(html, /href="\/#work"/);
-  assert.doesNotMatch(html, /class="study-notes/);
-  console.log('PASS: omitted optional fields and nonfeatured study backlink');
+  let html = await readFile(join(output, 'index.html'), 'utf8');
+  assert.match(html, /id="validation-plate"/);
+  assert.doesNotMatch(html, /View dish study/);
+  console.log('PASS: omitted optional fields render directly on homepage');
 
   await put(minimal.replace('slug: validation-plate', 'slug: prime-rib'));
   result = build(); assert.notEqual(result.status, 0); assert.match(result.log, /slugs must be unique/);
   console.log('PASS: duplicate slugs rejected');
-  await put(minimal.replace('featured: false', 'featured: true\nsignature: true'));
+  await put(minimal.replace('featured: true', 'featured: true\nsignature: true'));
   result = build(); assert.notEqual(result.status, 0); assert.match(result.log, /only one signature/);
   console.log('PASS: duplicate signatures rejected');
 
@@ -72,6 +72,18 @@ try {
   await page.locator('.process-film summary').click();
   assert.equal(await page.locator('.process-film details').evaluate(el => el.open), true);
   console.log('PASS: playable signature/section/process video, accessible controls/transcripts, reduced-motion autoplay guard');
+  const motionPage = await browser.newPage({ viewport: { width: 1280, height: 900 }, reducedMotion: 'no-preference' });
+  await motionPage.goto(origin);
+  const film = motionPage.locator('.process-film');
+  assert.equal(await film.locator('video source').getAttribute('src'), null, 'Below-fold footage must remain deferred.');
+  await film.scrollIntoViewIfNeeded();
+  await motionPage.waitForFunction(() => document.querySelector('.process-film')?.classList.contains('is-visible'));
+  assert.notEqual(await film.locator('.media-frame').evaluate(el => getComputedStyle(el).transform), 'none', 'Process video must visibly enter.');
+  await motionPage.waitForTimeout(1500);
+  assert.equal(await film.locator('.media-frame').evaluate(el => getComputedStyle(el).transform), 'none');
+  assert.equal(await film.locator('video').evaluate(v => v.muted), true);
+  assert.equal(await film.locator('video').evaluate(v => v.paused), false);
+  console.log('PASS: process footage defers fetching, visibly reveals, then plays muted and stays still');
 } finally {
   await browser?.close();
   if (server) await new Promise(resolve => server.close(resolve));

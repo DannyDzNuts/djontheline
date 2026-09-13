@@ -1,0 +1,13 @@
+---
+import { profile } from '../data/profile';
+import Arrow from './Arrow.astro';
+---
+<section class="contact-section" id="contact" aria-labelledby="contact-title" data-reveal>
+  <div class="page-width contact-inner">
+    <p class="eyebrow">Next service. Next opportunity.</p>
+    <h2 id="contact-title">Let’s make<br /><em>good food.</em></h2>
+    <p class="contact-description">For kitchen opportunities and a conversation about the work, get in touch.</p>
+    <a class="contact-email" href={`mailto:${profile.email}`} aria-describedby={profile.emailIsPlaceholder ? 'email-placeholder' : undefined}>{profile.email}<Arrow direction="up-right" /></a>
+    {profile.emailIsPlaceholder && <p class="contact-note" id="email-placeholder">Placeholder email — DJ’s contact address will be added here.</p>}
+  </div>
+</section>

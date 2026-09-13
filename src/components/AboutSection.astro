@@ -1,16 +1,11 @@
 ---
 import { profile } from '../data/profile';
-import { url } from '../lib/paths';
-import Arrow from './Arrow.astro';
-interface Props { full?: boolean; }
-const { full = false } = Astro.props;
 ---
-<section class:list={['about-section', 'page-width', { 'about-full': full }]} id="about" aria-labelledby="about-title" data-reveal>
-  <div class="about-kicker"><span class="eyebrow">The cook behind the work</span><span class="about-monogram" aria-hidden="true">DJ<span>.</span></span></div>
+<section class="about-section page-width" id="about" aria-labelledby="about-title" data-reveal>
+  <div class="about-kicker"><span class="eyebrow">The chef behind the work</span><span class="about-monogram" aria-hidden="true">DJ<span>.</span></span></div>
   <div class="about-copy">
-    {full ? <h1 id="about-title">Grounded in the kitchen.<br /><em>Always building.</em></h1> : <h2 id="about-title">Good food.<br /><em>Better every day.</em></h2>}
-    <p>{profile.bio}</p><p>{profile.approach}</p>
-    <div class="about-links"><a class="text-link" href={url(profile.resume)}>View résumé <span class="file-tag">{profile.resumeIsDraft ? 'Draft PDF' : 'PDF'}</span><Arrow direction="up-right" /></a>{!full && <a class="text-link" href={url('about/')}>A little more about me <Arrow /></a>}</div>
-    {full && <><div class="skills-block"><h2 class="eyebrow">Experience & practical skills</h2><ul>{profile.skills.map(skill => <li>{skill}</li>)}</ul></div><p class="profile-note">Restaurant names, dates, and further experience will be added with the final résumé.</p></>}
+    <h2 id="about-title">Good food.<br /><em>Better every day.</em></h2>
+    <p>{profile.bio}</p>
+    <p>{profile.approach}</p>
   </div>
 </section>

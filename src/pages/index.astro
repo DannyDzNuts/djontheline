@@ -4,15 +4,25 @@ import SignatureHero from '../components/SignatureHero.astro';
 import PortfolioIntro from '../components/PortfolioIntro.astro';
 import DishSection from '../components/DishSection.astro';
 import ProcessBreak from '../components/ProcessBreak.astro';
+import ExperienceSection from '../components/ExperienceSection.astro';
 import AboutSection from '../components/AboutSection.astro';
-import { portfolio } from '../lib/dishes';
+import ContactSection from '../components/ContactSection.astro';
+import { portfolio, processPlacements, slugOf } from '../lib/dishes';
 const { featured, signature, selected } = await portfolio();
-const processDish = featured.find(d => d.data.process);
+const breaks = processPlacements(featured, selected.length);
 ---
 <BaseLayout overlay={Boolean(signature)} image={signature?.data.heroMedia.type === 'image' ? signature.data.heroMedia.src : signature?.data.heroMedia.poster}>
   {signature && <SignatureHero dish={signature} total={featured.length} />}
-  <PortfolioIntro count={featured.length} sample={featured.some(dish => dish.data.sample || dish.data.heroMedia.placeholder)} />
-  <div class="selected-compositions">{selected.map((dish, index) => <><DishSection dish={dish} index={index + 2} total={featured.length} />{(processDish === dish || (processDish === signature && index === Math.min(1, selected.length - 1))) && processDish?.data.process && <ProcessBreak process={processDish.data.process} />}</>)}{selected.length === 0 && processDish?.data.process && <ProcessBreak process={processDish.data.process} />}</div>
+  <PortfolioIntro count={featured.length} placeholder={featured.some(dish => dish.data.heroMedia.placeholder)} />
+  <div class="selected-compositions">
+    {selected.map((dish, index) => {
+      const processDish = breaks.get(index);
+      return <><DishSection dish={dish} index={index + 2} total={featured.length} />{processDish?.data.process && <ProcessBreak process={processDish.data.process} id={`process-${slugOf(processDish)}`} />}</>;
+    })}
+    {selected.length === 0 && breaks.get(-1)?.data.process && <ProcessBreak process={breaks.get(-1)!.data.process!} id={`process-${slugOf(breaks.get(-1)!)}`} />}
+  </div>
   <div class="breathing-rule" aria-hidden="true"></div>
+  <ExperienceSection />
   <AboutSection />
+  <ContactSection />
 </BaseLayout>

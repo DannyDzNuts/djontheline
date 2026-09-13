@@ -14,16 +14,16 @@ const { width, height } = mediaInfo(dish.data.heroMedia);
 const coverSizes = `max(100vw, ${Math.ceil(width / height * 660)}px, ${Math.ceil(width / height * 100)}svh)`;
 ---
 <section class:list={['signature-hero', { 'has-video': dish.data.heroMedia.type === 'video' }]} id={slugOf(dish)} aria-labelledby="signature-title" data-dish>
-  <DishMedia media={dish.data.heroMedia} eager sizes={coverSizes} class="hero-media" label={false} extras={false} />
+  <DishMedia media={dish.data.heroMedia} eager sizes={coverSizes} class="hero-media" label={false} extras={false} lightbox={false} />
   <div class="hero-scrim" aria-hidden="true"></div>
-  <div class="hero-topline"><span>A working cook’s portfolio</span><span>Technique. Practice. Progress.</span></div>
+  <div class="hero-topline"><span>A chef’s portfolio</span><span>Technique. Practice. Progress.</span></div>
   <div class="hero-copy">
     <p class="eyebrow hero-eyebrow"><span class="small-rule" aria-hidden="true"></span> Signature dish <span class="hero-number">01 / {String(total).padStart(2, '0')}</span></p>
     <h1 id="signature-title">{dish.data.title}</h1>
     <p class="hero-description">{dish.data.shortDescription}</p>
     <TechniqueTags techniques={dish.data.techniques} />
   </div>
-  {dish.data.study && <a class="hero-study text-link" href={url(`dishes/${slugOf(dish)}/`)} aria-label={`View ${dish.data.title} dish study`}>View dish study <Arrow /></a>}
-  <div class="hero-bottom"><a href="#work">Explore the work <Arrow direction="down" /></a><span>{dish.data.heroMedia.placeholder ? 'Placeholder photography · sample dish' : `From the kitchen of ${profile.name}`}</span></div>
+  <div class="hero-bottom"><a href="#work">Explore the work <Arrow direction="down" /></a>{dish.data.heroMedia.type === 'image' && <a class="hero-enlarge" href={url(dish.data.heroMedia.src)} data-lightbox data-alt={dish.data.heroMedia.alt}>Enlarge photo <Arrow direction="up-right" /></a>}<span>{dish.data.heroMedia.placeholder ? 'Placeholder photography' : `From the kitchen of ${profile.name}`}</span></div>
 </section>
 {dish.data.heroMedia.type === 'video' && <div class="hero-video-notes page-width"><a class="text-link" href={url(dish.data.heroMedia.src)}>Open signature video <Arrow direction="up-right" /></a>{dish.data.heroMedia.caption && <p>{dish.data.heroMedia.caption}</p>}{dish.data.heroMedia.transcript && <details class="transcript"><summary>Video description / transcript</summary><p>{dish.data.heroMedia.transcript}</p></details>}</div>}
+{dish.data.media.length > 0 && <div class="dish-details signature-details page-width" aria-label={`${dish.data.title} — more from the plate`} data-reveal>{dish.data.media.map(media => <DishMedia media={media} sizes="(min-width: 900px) 35vw, 80vw" />)}</div>}

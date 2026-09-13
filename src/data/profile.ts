@@ -1,11 +1,14 @@
+/** Replace the email and remove its placeholder label together. */
 export const profile = {
   name: 'DJ',
-  role: 'Cook',
-  email: '', // Add your real email to enable the contact link.
-  location: '',
-  resume: '/resume.pdf',
-  resumeIsDraft: true,
+  role: 'Chef',
+  email: 'your@email.com',
+  emailIsPlaceholder: true,
   bio: 'My kitchen experience is centered on the grill: steaks, burgers, prime rib, and pork chops, alongside work on sauté, fryer, and cold-side stations.',
-  approach: 'I use this space to document food I’m proud of, look closely at the technique behind it, and keep building my range. Good fundamentals, honest feedback, and a better plate next time.',
-  skills: ['Grill & temperature control', 'Roasting & resting', 'Sauté & sauce work', 'Fryer & cold-side service', 'Mise en place', 'Timing & station organization'],
+  approach: 'I care about sound fundamentals, a well-organized station, and food that gets better with every service. This is a collection of the dishes and techniques I’m continuing to develop.',
+  experience: [
+    { title: 'Grill & roast', description: 'Steaks, burgers, prime rib, and pork chops. Managing heat, doneness, and resting time through service.' },
+    { title: 'Across the line', description: 'Experience on sauté, fryer, and cold-side stations, with attention to preparation, timing, and the finished plate.' },
+    { title: 'Service fundamentals', description: 'Mise en place, station organization, and coordinating the elements of a dish for service.' },
+  ],
 };

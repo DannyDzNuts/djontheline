@@ -7,9 +7,10 @@ import '../styles/motion.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import MotionDebug from '../components/MotionDebug.astro';
+import PhotoLightbox from '../components/PhotoLightbox.astro';
 import { url } from '../lib/paths';
 interface Props { title?: string; description?: string; overlay?: boolean; image?: string; }
-const { title = 'DJ — Cook | Selected Work', description = 'A working cook’s portfolio. Grill work, considered technique, and an evolving collection of dish studies.', overlay = false, image } = Astro.props;
+const { title = 'DJ — Chef | Culinary Portfolio', description = 'Chef DJ’s selected work. A strong grill background, thoughtful execution, and a steadily expanding range.', overlay = false, image } = Astro.props;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 <!doctype html>
@@ -21,17 +22,27 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:type" content="website" /><meta property="og:title" content={title} /><meta property="og:description" content={description} /><meta property="og:url" content={canonical} />
     {image && <meta property="og:image" content={new URL(url(image), Astro.site)} />}
     <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    <script is:inline>
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.dataset.motion = 'pending';
+        setTimeout(() => {
+          if (document.documentElement.dataset.motion === 'pending') delete document.documentElement.dataset.motion;
+        }, 4000);
+      }
+    </script>
   </head>
   <body id="top">
     <a class="skip-link" href="#main">Skip to content</a>
     <Header overlay={overlay} />
     <main id="main" tabindex="-1"><slot /></main>
-    <Footer /><MotionDebug />
+    <Footer /><PhotoLightbox /><MotionDebug />
     <script>
       import { initMotion } from '../scripts/scroll-motion';
       import { initMobileSettle } from '../scripts/mobile-settle';
       import { initVideo } from '../scripts/video';
-      initMotion(); initMobileSettle(); initVideo();
+      import { initWheelMotion } from '../scripts/wheel-motion';
+      import { initLightbox } from '../scripts/lightbox';
+      initMotion(); initMobileSettle(); initWheelMotion(); initVideo(); initLightbox();
     </script>
   </body>
 </html>
