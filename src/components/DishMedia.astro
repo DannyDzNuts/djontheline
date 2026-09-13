@@ -1,0 +1,31 @@
+---
+import type { Media } from '../lib/dishes';
+import { url } from '../lib/paths';
+import { mediaInfo } from '../lib/media';
+interface Props { media: Media; eager?: boolean; sizes?: string; class?: string; label?: boolean; extras?: boolean; }
+const { media, eager = false, sizes = '(min-width: 900px) 60vw, 100vw', class: className, label = true, extras = true } = Astro.props;
+const { prepared, width, height } = mediaInfo(media);
+const srcset = (format: 'webp' | 'avif') => prepared?.variants.map(v => `${url(v[format])} ${v.width}w`).join(', ');
+---
+<figure class:list={['dish-media', className]} style={`--media-ratio:${width}/${height};--media-position:${media.position}`}>
+  <div class="media-frame">
+    {media.type === 'image' ? (
+      <picture>
+        {prepared && <source type="image/avif" srcset={srcset('avif')} sizes={sizes} />}
+        <img src={url(media.src)} srcset={srcset('webp')} sizes={sizes} alt={media.alt} width={width} height={height} loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} decoding="async" />
+      </picture>
+    ) : (
+      <>
+        <video width={width} height={height} poster={url(media.poster)} preload="none" controls muted playsinline loop={media.autoplay} data-video data-autoplay={media.autoplay || undefined} aria-label={media.alt}>
+          <source data-src={url(media.src)} />
+          {media.captions && <track kind="captions" src={url(media.captions)} srclang="en" label="English" default />}
+          Your browser does not support embedded video. Use the video link below.
+        </video>
+        {extras && <a class="video-fallback" href={url(media.src)}>Open video file <span aria-hidden="true">↗</span></a>}
+      </>
+    )}
+    {media.placeholder && label && <span class="placeholder-label">Photography placeholder</span>}
+  </div>
+  {extras && media.caption && <figcaption>{media.caption}</figcaption>}
+  {extras && media.type === 'video' && media.transcript && <details class="transcript"><summary>Video description / transcript</summary><p>{media.transcript}</p></details>}
+</figure>

@@ -1,0 +1,21 @@
+{import.meta.env.DEV && <button class="motion-debug" hidden type="button">Replay entrance animations</button>}
+<script>
+  if (import.meta.env.DEV && new URLSearchParams(location.search).get('motionDebug') === 'true') {
+    const button = document.querySelector<HTMLButtonElement>('.motion-debug');
+    if (button) {
+      button.hidden = false;
+      button.addEventListener('click', () => {
+        const hero = document.querySelector('.signature-hero');
+        hero?.classList.add('replaying');
+        document.querySelectorAll('[data-reveal]').forEach(el => el.classList.remove('is-visible'));
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          hero?.classList.remove('replaying');
+          document.querySelectorAll('[data-reveal]').forEach(el => {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < innerHeight && rect.bottom > 0) el.classList.add('is-visible');
+          });
+        }));
+      });
+    }
+  }
+</script>

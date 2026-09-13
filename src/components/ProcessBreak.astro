@@ -1,0 +1,13 @@
+---
+import type { Dish } from '../lib/dishes';
+import DishMedia from './DishMedia.astro';
+import { mediaInfo } from '../lib/media';
+interface Props { process: NonNullable<Dish['data']['process']>; }
+const { process } = Astro.props;
+const { width, height } = mediaInfo(process.media);
+---
+{process.media.type === 'video' ? <section class="process-film" aria-labelledby="process-title"><div class="page-width"><p class="eyebrow">Behind the plate</p><h2 id="process-title">{process.title}</h2><p>{process.description}</p><DishMedia media={process.media} sizes="90vw" /></div></section> : <section class="process-break" aria-labelledby="process-title" data-reveal>
+  <DishMedia media={process.media} class="process-media" sizes={`max(100vw, ${Math.ceil(width / height * 580)}px, ${Math.ceil(width / height * 80)}svh)`} label={false} />
+  <div class="process-scrim" aria-hidden="true"></div>
+  <div class="process-copy page-width"><p class="eyebrow"><span class="small-rule" aria-hidden="true"></span> Behind the plate</p><h2 id="process-title">{process.title}</h2><p>{process.description}</p><span class="process-note">{process.media.placeholder ? 'Process study / still placeholder' : 'Process study / from the kitchen'}</span></div>
+</section>}

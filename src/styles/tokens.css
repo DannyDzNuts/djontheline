@@ -1,0 +1,15 @@
+:root {
+  --paper: #f4f2ec;
+  --ink: #1f2421;
+  --muted: #656c65;
+  --sage: #69796b;
+  --sage-dark: #465649;
+  --line: #d6d2c9;
+  --dark: #1e2722;
+  --light: #f6f4ef;
+  --serif: 'Newsreader Variable', Georgia, serif;
+  --sans: 'DM Sans Variable', Arial, sans-serif;
+  --ease: cubic-bezier(.2, .75, .2, 1);
+  --gutter: clamp(24px, 5vw, 88px);
+  --content: 1360px;
+}

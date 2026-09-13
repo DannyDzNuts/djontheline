@@ -1,0 +1,16 @@
+---
+import { url } from '../lib/paths';
+import { profile } from '../data/profile';
+import Arrow from './Arrow.astro';
+interface Props { overlay?: boolean; }
+const { overlay = false } = Astro.props;
+const isAbout = Astro.url.pathname.replace(import.meta.env.BASE_URL, '').startsWith('about');
+---
+<header class:list={['site-header', { overlay }]}>
+  <a class="wordmark" href={url()} aria-label="DJ — Cook, home">{profile.name}<span class="wordmark-rule" aria-hidden="true"></span><span>{profile.role}</span></a>
+  <nav aria-label="Main navigation">
+    <a href={url('#work')} aria-current={!isAbout ? 'location' : undefined}>Work</a>
+    <a href={url('about/')} aria-current={isAbout ? 'page' : undefined}>About</a>
+    <a href={url(profile.resume)} aria-label={profile.resumeIsDraft ? 'Résumé (draft PDF)' : 'Résumé (PDF)'}>Résumé <Arrow direction="up-right" /></a>
+  </nav>
+</header>

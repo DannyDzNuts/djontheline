@@ -1,0 +1,101 @@
+{
+  "/media/dishes/bacon-jalapeno-burger/hero.webp": {
+    "width": 1400,
+    "height": 1163,
+    "variants": [
+      {
+        "width": 480,
+        "webp": "/media/dishes/bacon-jalapeno-burger/hero-480.webp",
+        "avif": "/media/dishes/bacon-jalapeno-burger/hero-480.avif"
+      },
+      {
+        "width": 800,
+        "webp": "/media/dishes/bacon-jalapeno-burger/hero-800.webp",
+        "avif": "/media/dishes/bacon-jalapeno-burger/hero-800.avif"
+      },
+      {
+        "width": 1200,
+        "webp": "/media/dishes/bacon-jalapeno-burger/hero-1200.webp",
+        "avif": "/media/dishes/bacon-jalapeno-burger/hero-1200.avif"
+      }
+    ]
+  },
+  "/media/dishes/grilled-pork-chop/hero.webp": {
+    "width": 1400,
+    "height": 927,
+    "variants": [
+      {
+        "width": 480,
+        "webp": "/media/dishes/grilled-pork-chop/hero-480.webp",
+        "avif": "/media/dishes/grilled-pork-chop/hero-480.avif"
+      },
+      {
+        "width": 800,
+        "webp": "/media/dishes/grilled-pork-chop/hero-800.webp",
+        "avif": "/media/dishes/grilled-pork-chop/hero-800.avif"
+      },
+      {
+        "width": 1200,
+        "webp": "/media/dishes/grilled-pork-chop/hero-1200.webp",
+        "avif": "/media/dishes/grilled-pork-chop/hero-1200.avif"
+      }
+    ]
+  },
+  "/media/dishes/prime-rib/hero.webp": {
+    "width": 2200,
+    "height": 1238,
+    "variants": [
+      {
+        "width": 480,
+        "webp": "/media/dishes/prime-rib/hero-480.webp",
+        "avif": "/media/dishes/prime-rib/hero-480.avif"
+      },
+      {
+        "width": 800,
+        "webp": "/media/dishes/prime-rib/hero-800.webp",
+        "avif": "/media/dishes/prime-rib/hero-800.avif"
+      },
+      {
+        "width": 1200,
+        "webp": "/media/dishes/prime-rib/hero-1200.webp",
+        "avif": "/media/dishes/prime-rib/hero-1200.avif"
+      },
+      {
+        "width": 1600,
+        "webp": "/media/dishes/prime-rib/hero-1600.webp",
+        "avif": "/media/dishes/prime-rib/hero-1600.avif"
+      },
+      {
+        "width": 2200,
+        "webp": "/media/dishes/prime-rib/hero-2200.webp",
+        "avif": "/media/dishes/prime-rib/hero-2200.avif"
+      }
+    ]
+  },
+  "/media/dishes/seasonal-feature/hero.webp": {
+    "width": 1800,
+    "height": 1200,
+    "variants": [
+      {
+        "width": 480,
+        "webp": "/media/dishes/seasonal-feature/hero-480.webp",
+        "avif": "/media/dishes/seasonal-feature/hero-480.avif"
+      },
+      {
+        "width": 800,
+        "webp": "/media/dishes/seasonal-feature/hero-800.webp",
+        "avif": "/media/dishes/seasonal-feature/hero-800.avif"
+      },
+      {
+        "width": 1200,
+        "webp": "/media/dishes/seasonal-feature/hero-1200.webp",
+        "avif": "/media/dishes/seasonal-feature/hero-1200.avif"
+      },
+      {
+        "width": 1600,
+        "webp": "/media/dishes/seasonal-feature/hero-1600.webp",
+        "avif": "/media/dishes/seasonal-feature/hero-1600.avif"
+      }
+    ]
+  }
+}

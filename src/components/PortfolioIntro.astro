@@ -1,0 +1,9 @@
+---
+interface Props { count: number; sample?: boolean; }
+const { count, sample = false } = Astro.props;
+---
+<section class="portfolio-intro page-width" id="work" aria-labelledby="work-title">
+  <div class="section-label"><span class="eyebrow">Selected work</span><span class="eyebrow">{String(count).padStart(2, '0')} dishes / an ongoing practice</span></div>
+  <div class="intro-grid"><h2 id="work-title">Food I’m proud of,<br /><em>and the skills behind it.</em></h2><p>Built on the fundamentals.<br />Refined with every service.<br />A collection of plates, process,<br class="desktop-break" /> and lessons along the way.</p></div>
+  {sample && <p class="sample-note">An early look — sample photographs and study notes mark the places for my own work.</p>}
+</section>

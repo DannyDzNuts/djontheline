@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SignatureHero from '../components/SignatureHero.astro';
+import PortfolioIntro from '../components/PortfolioIntro.astro';
+import DishSection from '../components/DishSection.astro';
+import ProcessBreak from '../components/ProcessBreak.astro';
+import AboutSection from '../components/AboutSection.astro';
+import { portfolio } from '../lib/dishes';
+const { featured, signature, selected } = await portfolio();
+const processDish = featured.find(d => d.data.process);
+---
+<BaseLayout overlay={Boolean(signature)} image={signature?.data.heroMedia.type === 'image' ? signature.data.heroMedia.src : signature?.data.heroMedia.poster}>
+  {signature && <SignatureHero dish={signature} total={featured.length} />}
+  <PortfolioIntro count={featured.length} sample={featured.some(dish => dish.data.sample || dish.data.heroMedia.placeholder)} />
+  <div class="selected-compositions">{selected.map((dish, index) => <><DishSection dish={dish} index={index + 2} total={featured.length} />{(processDish === dish || (processDish === signature && index === Math.min(1, selected.length - 1))) && processDish?.data.process && <ProcessBreak process={processDish.data.process} />}</>)}{selected.length === 0 && processDish?.data.process && <ProcessBreak process={processDish.data.process} />}</div>
+  <div class="breathing-rule" aria-hidden="true"></div>
+  <AboutSection />
+</BaseLayout>
