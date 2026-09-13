@@ -9,7 +9,7 @@ async function prepare(page: Page) {
     scrollTo({ top: el.getBoundingClientRect().top + scrollY - innerHeight * .12 - 44, behavior: 'instant' });
   });
   await page.waitForTimeout(1000);
-  // Measure the resting position after the entrance's 22px transform resolves.
+  // Reconfirm the resting position after fonts and entrance composition settle.
   await page.locator('#bacon-jalapeno-burger [data-snap-anchor]').evaluate(el => {
     scrollTo({ top: el.getBoundingClientRect().top + scrollY - innerHeight * .12 - 44, behavior: 'instant' });
   });
@@ -66,4 +66,26 @@ test('reduced motion and fast swipes do not settle', async ({ page }) => {
   const fastPosition = await page.evaluate(() => scrollY);
   await page.waitForTimeout(700);
   expect(await page.evaluate(() => scrollY)).toBe(fastPosition);
+});
+
+test('native touch dragging stays under the finger before settling after release', async ({ page }) => {
+  await prepare(page);
+  await page.locator('#bacon-jalapeno-burger [data-snap-anchor]').evaluate(el => {
+    scrollTo(0, el.getBoundingClientRect().top + scrollY - innerHeight * .12 - 95);
+  });
+  const startPosition = await page.evaluate(() => scrollY);
+  const session = await page.context().newCDPSession(page);
+  await session.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x: 300, y: 600 }] });
+  for (let i = 1; i <= 20; i++) {
+    await session.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: 300, y: 600 - i * 4 }] });
+    await page.waitForTimeout(40);
+  }
+  const dragPosition = await page.evaluate(() => scrollY);
+  expect(dragPosition).toBeGreaterThan(startPosition + 30);
+  await page.waitForTimeout(350);
+  expect(await page.evaluate(() => scrollY)).toBe(dragPosition);
+  await session.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await page.waitForTimeout(1000);
+  const error = await page.locator('#bacon-jalapeno-burger [data-snap-anchor]').evaluate(el => Math.abs(el.getBoundingClientRect().top - innerHeight * .12));
+  expect(error).toBeLessThan(2);
 });

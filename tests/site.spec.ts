@@ -93,6 +93,7 @@ test('no JavaScript still exposes all work and direct routes', async ({ browser 
 });
 
 test('responsive sources, reserved space, production debug guard, and screenshots', async ({ page, browser }) => {
+  test.setTimeout(45000);
   await page.addInitScript(() => {
     (window as any).layoutShift = 0;
     new PerformanceObserver(list => {
@@ -104,7 +105,7 @@ test('responsive sources, reserved space, production debug guard, and screenshot
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(1600);
   expect(await page.locator('.motion-debug').count()).toBe(0);
-  for (const element of await page.locator('[data-reveal]').all()) { await element.scrollIntoViewIfNeeded(); await page.waitForTimeout(1000); }
+  for (const element of await page.locator('[data-reveal]').all()) { await element.scrollIntoViewIfNeeded(); await page.waitForTimeout(1550); }
   await page.evaluate(() => scrollTo(0, 0));
   await page.screenshot({ path: '/tmp/foodfolio-desktop.png', fullPage: true });
   expect(await page.evaluate(() => (window as any).layoutShift)).toBeLessThan(0.05);
@@ -115,7 +116,7 @@ test('responsive sources, reserved space, production debug guard, and screenshot
   await mobile.goto(new URL(base, process.env.TEST_URL || 'http://127.0.0.1:4321').href);
   await mobile.waitForTimeout(1600);
   await mobile.screenshot({ path: '/tmp/foodfolio-mobile-hero.png' });
-  for (const element of await mobile.locator('[data-reveal]').all()) { await element.scrollIntoViewIfNeeded(); await mobile.waitForTimeout(1000); }
+  for (const element of await mobile.locator('[data-reveal]').all()) { await element.scrollIntoViewIfNeeded(); await mobile.waitForTimeout(1550); }
   await mobile.evaluate(() => scrollTo(0, 0));
   await mobile.screenshot({ path: '/tmp/foodfolio-mobile.png', fullPage: true });
   expect(await mobile.locator('.hero-media img').evaluate((el: HTMLImageElement) => el.currentSrc)).toMatch(/1600\.(avif|webp)$/);

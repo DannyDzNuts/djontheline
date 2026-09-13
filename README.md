@@ -86,7 +86,7 @@ Replace `public/resume.pdf` with your final résumé and set `resumeIsDraft: fal
 
 ## Motion and scrolling
 
-The page uses native desktop wheel, trackpad, keyboard, scrollbar, and touch scrolling. Wheel events are never canceled or rescaled; smooth wheel feel follows the visitor's browser/OS settings. CSS animates a 1.4-second hero entrance; IntersectionObserver reveals each composition once. Native cross-document view transitions are a progressive enhancement, with standard navigation as fallback. Content works without JavaScript.
+The page uses native desktop wheel, trackpad, keyboard, scrollbar, and touch scrolling. Wheel events are never canceled or rescaled; smooth wheel feel follows the visitor's browser/OS settings. CSS animates a 1.5-second hero zoom and title wipe; IntersectionObserver introduces each composition with a deeper media reveal, image zoom, and grouped text stagger. Process photography has its own slow zoom into place. Everything becomes still after 1.5 seconds; there are no looping decorative effects. Motion lives in `src/styles/motion.css`, and the scroll anchors remain stationary during reveals. Native cross-document view transitions are a progressive enhancement, with standard navigation as fallback. Content works without JavaScript.
 
 On touch devices, an optional 340ms settle can run after 220ms without scrolling. It moves at most 72px / 9% of the viewport, targets media at 12% from the top, skips fast/far swipes and tall media, and cancels on any new interaction. It never changes an active touch drag or native momentum. Reduced motion disables this, entrances, transitions, and autoplay. Homepage IDs support direct `/#your-dish` links; automatic fragment rewriting is deliberately omitted to preserve explicit anchor/history behavior.
 
@@ -98,7 +98,7 @@ In **development only**, open `/?motionDebug=true` for the replay control. Produ
 2. In **Settings → Pages**, choose **GitHub Actions** as the source.
 3. The included workflow builds and deploys `dist/`. Pull requests build without publishing.
 
-The config derives `site` and `base` from GitHub's repository/owner environment. `OWNER.github.io` repositories use `/`; other repositories use `/REPOSITORY/`. All internal links, résumé, fonts, and media respect the base. For local production verification:
+The configured production address is **https://djontheline.com**, with base `/`. All internal links, résumé, fonts, and media respect the base. `SITE_URL` and `BASE_PATH` optionally override these defaults. For a repository-hosted GitHub Pages site, set those repository Actions variables to `https://YOUR-USERNAME.github.io` and `/YOUR-REPOSITORY/` (use `/` for an `OWNER.github.io` repository). For local production verification:
 
 ```sh
 SITE_URL=https://YOUR-USERNAME.github.io BASE_PATH=/FoodFolio/ npm run build
@@ -106,7 +106,7 @@ BASE_PATH=/FoodFolio/ npm run preview
 # Open http://localhost:4321/FoodFolio/
 ```
 
-For a custom domain, configure the domain/DNS in GitHub Pages, set repository Actions variables `SITE_URL=https://your-domain.example` and `BASE_PATH=/`, and redeploy. You can also add the domain in `public/CNAME`. With the Actions publishing method, configure the domain in Pages settings as well. Never include `/public` or the repository name in dish frontmatter paths. Set `SITE_URL` for non-GitHub builds so canonical/social URLs do not use the local placeholder origin.
+The current custom domain is already the default in `astro.config.mjs`. To change it, configure the new domain/DNS in GitHub Pages, set repository Actions variables `SITE_URL=https://your-domain.example` and `BASE_PATH=/`, and redeploy. You can also add the domain in `public/CNAME`. With the Actions publishing method, configure the domain in Pages settings as well. Never include `/public` or the repository name in dish frontmatter paths.
 
 References: [Astro content collections](https://docs.astro.build/en/guides/content-collections/) and [Astro GitHub Pages deployment](https://docs.astro.build/en/guides/deploy/github/).
 
@@ -117,6 +117,8 @@ npm run test:unit
 npx playwright install chromium
 npm run build
 npm test
+# Optional authoring/video fixtures (requires ffmpeg):
+npm run test:content
 ```
 
 For a repository-path build, run tests with `TEST_BASE=/FoodFolio/ TEST_URL=http://127.0.0.1:4321/FoodFolio/ BASE_PATH=/FoodFolio/ npm test`. Browser checks cover routes/assets, six widths, keyboard/anchors, reduced motion, accessibility, responsive media, scroll behavior, and no-JavaScript access. See `docs/verification.md` for the performed checks and physical-device limits.

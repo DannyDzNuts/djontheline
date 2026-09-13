@@ -5,7 +5,7 @@ import Arrow from './Arrow.astro';
 interface Props { full?: boolean; }
 const { full = false } = Astro.props;
 ---
-<section class:list={['about-section', 'page-width', { 'about-full': full }]} id="about" aria-labelledby="about-title">
+<section class:list={['about-section', 'page-width', { 'about-full': full }]} id="about" aria-labelledby="about-title" data-reveal>
   <div class="about-kicker"><span class="eyebrow">The cook behind the work</span><span class="about-monogram" aria-hidden="true">DJ<span>.</span></span></div>
   <div class="about-copy">
     {full ? <h1 id="about-title">Grounded in the kitchen.<br /><em>Always building.</em></h1> : <h2 id="about-title">Good food.<br /><em>Better every day.</em></h2>}
