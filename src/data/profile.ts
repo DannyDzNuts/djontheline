@@ -2,8 +2,8 @@
 export const profile = {
   name: 'DJ',
   role: 'Chef',
-  email: 'your@email.com',
-  emailIsPlaceholder: true,
+  email: 'djontheline@protonmail.com',
+  emailIsPlaceholder: false,
   bio: 'My kitchen experience is centered on the grill: steaks, burgers, prime rib, and pork chops, alongside work on sauté, fryer, and cold-side stations.',
   approach: 'I care about sound fundamentals, a well-organized station, and food that gets better with every service. This is a collection of the dishes and techniques I’m continuing to develop.',
   experience: [
