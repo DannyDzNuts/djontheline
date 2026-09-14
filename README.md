@@ -129,7 +129,7 @@ The same `media` schema accepts a video here, including its required poster. Up 
 
 Edit `src/data/profile.ts` to set the name, Chef role, biography, and practical kitchen experience. Experience is organized around actual station work; add employers or dates only when accurate details are available.
 
-The visible email is currently **`your@email.com`**, explicitly labeled as a placeholder. Replace `email` with the real address and set `emailIsPlaceholder: false`. The contact section uses a normal `mailto:` link. It has no form or external service configuration.
+The contact address is configured centrally in `src/data/profile.ts`. Set `email` to your address and keep `emailIsPlaceholder: false` for a real address. The contact section uses a normal `mailto:` link. It has no form or external service configuration.
 
 ## Motion and scrolling
 

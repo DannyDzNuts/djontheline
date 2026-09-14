@@ -21,7 +21,6 @@ const breaks = processPlacements(featured, selected.length);
     })}
     {selected.length === 0 && breaks.get(-1)?.data.process && <ProcessBreak process={breaks.get(-1)!.data.process!} id={`process-${slugOf(breaks.get(-1)!)}`} />}
   </div>
-  <div class="breathing-rule" aria-hidden="true"></div>
   <ExperienceSection />
   <AboutSection />
   <ContactSection />

@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import AxeBuilder from '@axe-core/playwright';
+import { profile } from '../src/data/profile';
 const base = process.env.TEST_BASE || '/';
 
 test('single page navigation, media, production paths, and removed features', async ({ page, request }) => {
@@ -8,7 +9,7 @@ test('single page navigation, media, production paths, and removed features', as
   await expect(page.locator('h1')).toHaveText('Prime Rib');
   await expect(page.locator('header nav a')).toHaveText(['Work', 'Experience', 'About', 'Contact']);
   expect(await page.locator('body').innerText()).not.toMatch(/dish study|case study|process study|résumé|working cook/i);
-  await expect(page.locator('.contact-email')).toHaveAttribute('href', 'mailto:your@email.com');
+  await expect(page.locator('.contact-email')).toHaveAttribute('href', `mailto:${profile.email}`);
   expect(await page.locator('link[rel="canonical"]').getAttribute('href')).toBe('https://djontheline.com' + base);
   for (const link of await page.locator('header nav a').all()) { await link.click(); await expect(page.locator((await link.getAttribute('href'))!.replace(base, ''))).toBeInViewport(); }
   const urls = await page.locator('a[href], img[src], source[srcset], link[rel="stylesheet"]').evaluateAll(els => els.flatMap(el => (el.getAttribute('href') || el.getAttribute('src') || el.getAttribute('srcset') || '').split(',').map(v => v.trim().split(' ')[0]).filter(v => v.startsWith('/'))));

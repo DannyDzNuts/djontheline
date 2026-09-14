@@ -108,7 +108,6 @@ figcaption { font-size: 10px; color: var(--muted); margin-top: 13px; line-height
 .process-film .page-width > p:not(.eyebrow) { max-width: 550px; color: #d4dacf; margin-bottom: 35px; }
 .process-film figcaption, .process-film .transcript { color: #d4dacf; }
 .process-film a:focus-visible, .process-film video:focus-visible, .process-film summary:focus-visible { outline-color: var(--light); }
-.breathing-rule { width: 1px; height: 85px; background: var(--line); margin: -70px auto 112px; }
 .about-section { display: grid; grid-template-columns: 1fr 1.4fr; gap: 10%; padding-bottom: 130px; }
 .about-kicker { padding-top: 8px; }
 .about-kicker .eyebrow { color: var(--muted); }
@@ -194,7 +193,6 @@ figcaption { font-size: 10px; color: var(--muted); margin-top: 13px; line-height
   .process-scrim { background: linear-gradient(90deg, rgb(15 23 19 / .88), rgb(15 23 19 / .48)); }
   .process-media figcaption { left: var(--gutter); right: auto; font-size: 8px; }
   .process-note { font-size: 7px; margin-top: 35px; }
-  .breathing-rule { height: 60px; margin: -5px auto 75px; }
   .about-section { display: block; padding-bottom: 85px; }
   .about-kicker { margin-bottom: 28px; }
   .about-monogram { display: none; }
@@ -225,8 +223,9 @@ figcaption { font-size: 10px; color: var(--muted); margin-top: 13px; line-height
 .contact-inner h2 { font-size: clamp(64px, 8vw, 120px); }
 .contact-inner h2 em { color: #c5d2be; }
 .contact-description { font-size: 14px; line-height: 1.9; color: #d4dacf; max-width: 390px; margin-top: 30px; }
-.contact-email { display: inline-flex; align-items: center; gap: 28px; border-bottom: 1px solid #84907f; padding-block: 12px; margin-top: 26px; font-size: clamp(24px, 3.5vw, 46px); letter-spacing: -.04em; overflow-wrap: anywhere; }
-.contact-email:hover { border-color: var(--light); }
+.contact-email { display: inline-flex; align-items: baseline; max-width: 100%; gap: 28px; padding-block: 12px; margin-top: 26px; font-size: clamp(24px, 3.5vw, 46px); letter-spacing: -.04em; overflow-wrap: anywhere; }
+.contact-email-text { min-width: 0; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .25em; text-decoration-color: #84907f; }
+.contact-email:hover .contact-email-text { text-decoration-color: var(--light); }
 .contact-email svg { width: 28px; height: 28px; flex-shrink: 0; }
 .contact-note { font-size: 11px; color: #c5cec1; margin-top: 15px; }
 @media (max-width: 760px) {
@@ -239,7 +238,7 @@ figcaption { font-size: 10px; color: var(--muted); margin-top: 13px; line-height
   .experience-item { gap: 16px; padding-block: 25px; }
   .experience-item h3 { font-size: 29px; }
   .contact-description { font-size: 13px; }
-  .contact-email { gap: 15px; }
+  .contact-email { gap: 12px; font-size: clamp(18px, 5vw, 24px); }
   .contact-note { max-width: 280px; font-size: 10px; }
 }
 @media (max-width: 480px) {
